@@ -101,3 +101,54 @@ les Additions invité de VirtualBox).*
 
 ## **Exercice 2 : Partitionnement LVM**
 
+1. *On va réutiliser le disque de 5 Gio de l’exercice précédent. Commencez par démonter les systèmes de
+fichiers montés dans /data et /win s’ils sont encore montés, et supprimez les lignes correspondantes
+du fichier /etc/fstab*
+
+Pour démonter un système de fichiers monté, on utilise la commande sudo umount nom_systeme. Dans notre cas, on démonte les systèmes de fichiers /data et /win. Puis on supprime les lignes correspondantes du fichier /etc/fstab pour éviter que les systèmes de fichiers soient automatiquement remontés.
+
+2. *Supprimez les deux partitions du disque, et créez une partition unique de type LVM*
+
+Pour supprimer une partition, il faut utiliser la commande sudo fdisk chemin_partition. Dans notre cas, on tape la commande sudo fdisk /dev/sdb. Puis on tape d pour delete la partition que l'on veut supprimer. 
+
+3. *A l’aide de la commande pvcreate, créez un volume physique LVM. Validez qu’il est bien créé, en
+utilisant la commande pvdisplay.*
+
+Pour formater le disque physique et l'intégrer au système de gestion on fait : 
+```
+pvcreate /dev/sdb1
+```
+Pour vérifier si cela a fonctionné on fait : 
+```
+pvdisplay
+```
+
+4. *A l’aide de la commande vgcreate, créez un groupe de volumes, qui pour l’instant ne contiendra que
+le volume physique créé à l’étape précédente. Vérifiez à l’aide de la commande vgdisplay.*
+
+On fait : 
+```
+vgcreate vg00 /dev/sdb1
+```
+(vg00 est le nom du groupe, il est nécessaire)
+Pour vérifier si cela a fonctionné on fait : 
+```
+vgdisplay
+```
+
+5. *Créez un volume logique appelé lvData occupant l’intégralité de l’espace disque disponible.*
+
+6. *Dans ce volume logique, créez une partition que vous formaterez en ext4, puis procédez comme dans
+l’exercice 1 pour qu’elle soit montée automatiquement, au démarrage de la machine, dans /data*
+
+7. *Eteignez la VM pour ajouter un second disque (peu importe la taille pour cet exercice). Redémarrez
+la VM, vérifiez que le disque est bien présent. Puis, répétez les questions 2 et 3 sur ce nouveau disque.*
+
+
+8. *Utilisez la commande vgextend <nom_vg> <nom_pv> pour ajouter le nouveau disque au groupe de
+volumes*
+
+
+9. *Utilisez la commande lvresize (ou lvextend) pour agrandir le volume logique. Enfin, il ne faut pas
+oublier de redimensionner le système de fichiers à l’aide de la commande resize2fs.*
+
